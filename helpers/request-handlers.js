@@ -6,6 +6,7 @@ module.exports.mongoPath = function(path){
 };
 
 //Adds a socket to the list of available servers to forward to
+//This line does not seem to be working properly
 module.exports.addSocket = function(info, socket){
   return serverHelpers.find(info)
   .then(function(taken){
