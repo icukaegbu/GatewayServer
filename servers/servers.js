@@ -1,25 +1,29 @@
 var app = require('express')();
 var request = require('request');
 var io = require('socket.io-client');
-var port = 5000;
-var token = 'bob';
-var secret = '';
-var address = 'http://localhost:'+port;
-var gateway = 'http://localhost:27007';
-var baseUrl = 'localhost';
-var name = 'http://www.google.com';
+var server_info = {
+  port: process.argv[2] || 5000,
+  token: 'bob',
+  secret: '',
+  gateway: 'http://localhost:27007',
+  baseUrl: 'localhost',
+  connected: false
+};
+server_info.address = 'http://localhost:'+ server_info.port;
+server_info.name =  process.argv[3] || '/Auth_' + server_info.port;
 
-var socket = io(gateway);
-socket.emit('register', {name:name, identity:token, address:address});
+
+var socket = io(server_info.gateway);
+socket.emit('register', {name:server_info.name, identity:server_info.token, address:server_info.address});
 
 
 socket.on('register', function(data){
-  secret = data.secret;
-  socket.emit('auth', {secret:secret});
+  server_info.secret = data.secret;
+  socket.emit('auth', {secret:server_info.secret});
 });
 socket.on('authorized', function(data){
   console.log('successfully connected to gateway server');
-  var info = {name:name, identity: token, address: address};
+  var info = {name:server_info.name, identity: server_info.token, address: server_info.address};
   socket.emit('info', info);
 });
 
@@ -31,10 +35,14 @@ socket.on('forward', function(data){
 });
 socket.on('added', function(){
   console.log('Added to gateway server, waiting...');
+  server_info.connected=true;
 });
 
 app.use('/', function(req,res){
-  res.send('Welcome to '+ port + 'on localhost');
+  res.send('Welcome to '+ server_info.port + 'on localhost');
 });
-app.listen(5000);
-console.log('listening on 5000');
+app.listen(server_info.port);
+console.log('listening on', server_info.port);
+
+module.exports.socket = socket;
+module.exports.server_info = server_info;

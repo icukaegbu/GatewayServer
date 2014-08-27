@@ -8,6 +8,7 @@ var app = express();
 
 io.listen(env.port);
 handler.log('listening on ', env.port);
+handler.mongoPath(env.mongo);
 io.on('connection', function(socket){
 
   handler.log('received a connection');

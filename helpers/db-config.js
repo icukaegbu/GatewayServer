@@ -13,4 +13,5 @@ module.exports = function(mongo_path){
   db.once('open', function(){
     console.log('connected to DB');
   });
+  return db;
 };
