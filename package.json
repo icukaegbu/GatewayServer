@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/Gabs00/GatewayServer",
   "dependencies": {
-    "bcrypt": "^0.8.0",
+    "bcrypt-nodejs": "0.0.3",
     "bluebird": "1.0.8",
     "body-parser": "^1.6.5",
     "chai": "^1.9.0",
