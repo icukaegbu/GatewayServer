@@ -1,5 +1,5 @@
 var serverHelpers = require('./server-helpers');
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcrypt-nodejs');
 
 module.exports.mongoPath = function(path){
   serverHelpers.mongoPath(path);
