@@ -11,6 +11,7 @@ var server_info = {
 };
 server_info.address = 'http://localhost:'+ server_info.port;
 server_info.name =  process.argv[3] || '/Auth_' + server_info.port;
+console.log(process.argv[3] + ':' + process.argv[2]);
 
 
 var socket = io(server_info.gateway);
