@@ -42,7 +42,7 @@ app.use('/', function(req,res){
   res.send('Welcome to '+ server_info.port + 'on localhost');
 });
 app.listen(server_info.port);
-console.log('listening on', server_info.port);
+console.log('listening on', server_info.port + ':' + server_info.name);
 
 module.exports.socket = socket;
 module.exports.server_info = server_info;
