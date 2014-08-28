@@ -1,6 +1,6 @@
 var dbModels = require('./dbModels');
 var db = require('./db-config.js');
-var servers = {};
+var addedServers = {};
 var mongo = {};
 
 module.exports.mongoPath = function(path){
@@ -38,10 +38,11 @@ module.exports.find = function(name){
 
 //add a server to the list of servers
 module.exports.add = function(info, socket){
+  console.log('Received call to add server: '+info.name);
   var newServ;
-  server[info.name] = socket;
+  addedServers[info.name] = socket;
   console.log('stringifying info');
-  var infoString = JSON.stringigy(info);
+  var infoString = JSON.stringify(info);
   
   return newServ = new Servers({name:info.name, info:infoString}).save(function(err){
     console.log(err, '<================');
