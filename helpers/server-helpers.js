@@ -23,6 +23,7 @@ module.exports.servers = function(){
   });
 };
 
+//search for a server in the list of servers
 module.exports.find = function(name){
   return Servers.findOne({name:name}).exec()
   .then(function(found){
@@ -35,6 +36,7 @@ module.exports.find = function(name){
   });
 };
 
+//add a server to the list of servers
 module.exports.add = function(info, socket){
   var newServ;
   server[info.name] = socket;
@@ -46,9 +48,12 @@ module.exports.add = function(info, socket){
   });
 };
 
+//remove a server from the list of servers
 module.exports.remove = function(socket, name){
   Servers.findOneAndRemove({name:name}).exec();
 };
+
+//check if this server is allowed to connect to the routing server
 module.exports.allowedCheck = function(info){
   return Allowed.findOne({name:info.name, identity:info.identity}).exec().
   then(function(found){
@@ -59,6 +64,9 @@ module.exports.allowedCheck = function(info){
     }
   });
 };
+
+//create a token for registering a server with the routing server
+//and adds the user to authenticating list
 module.exports.register = function(token, name, address){
   return Sec.findOne({token:token}).exec()
   .then(function(found){
@@ -76,6 +84,8 @@ module.exports.register = function(token, name, address){
     }
   });
 };
+
+//authenticate if a server can connect to the routing server
 module.exports.isAuth = function(secret){
   return Sec.findOne({token:secret}).exec()
   .then(function(resp){
