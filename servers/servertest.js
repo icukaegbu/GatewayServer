@@ -3,19 +3,19 @@ var spawn = require('child_process').spawn;
 var servercount = process.argv[2] || 10;
 var portStart = 5000;
 var name = 'Auth_';
-var servers = [];
+var spawnedServers = [];
 var allServers = [];
 
 //REFACTOR
-while(servers.length < servercount){
-  var index = servers.length;
-  var port = portStart++;
-  var n = name + port;
-  servers.push(spawn('node', ['./servers.js', port, n], {stdio:'inherit'}));
-}
-for (var i = 0; i < servers.length; i++) {
-	console.log(servers[i]);
-};
+// while(servers.length < servercount){
+//   var index = servers.length;
+//   var port = portStart++;
+//   var n = name + port;
+//   servers.push(spawn('node', ['./servers.js', port, n], {stdio:'inherit'}));
+// }
+// for (var i = 0; i < servers.length; i++) {
+// 	console.log(servers[i]);
+// };
 //console.log(servers);
 
 var initConnections = function(){
@@ -25,7 +25,7 @@ var initConnections = function(){
 
 	//iterate thru the db list and spawn new processes
 	for (var i = 0; i < allServers.length; i++) {
-		servers.push(spawnServer(allServers[i]));
+		spawnedServers.push(spawnServer(allServers[i]));
 	};
 }
 
@@ -37,20 +37,26 @@ var addServer = function(){
 	var newServer = {};
 	newServer.port = portStart++;
 	newServer.name = name + newServer.port;
+	console.log(newServer);
 
 	//if port already exists in db, regenerate it
-	while ( serverHelper.find( newServer.name ) ){
-		newServer.port = portStart++;
-		newServer.name = name + newServer.port;
-	}
+	newServer = checkServer(newServer);
+
+	// while ( !serverHelper.find( newServer.name ) ){
+	// 	console.log('Made it here');
+	// 	newServer.port = portStart++;
+	// 	newServer.name = name + newServer.port;
+	// 	console.log('Baking server: '+newServer);
+	// }
 
 	//add date of creation
-	newServer.createdOn = new Date.now;
+	newServer.createdOn = Date.now;
 
 	//if server does not exit, add to db and spawn
 	if ( serverHelper.add(newServer, newServer.port) ) {
 		console.log('Added new server: ' + newServer.name);
-		servers.push(spawnServer(newServer));
+		spawnedServers.push(spawnServer(newServer));
+		allServers.push(newServer);
 	}
 
 	return newServer;
@@ -64,6 +70,34 @@ var spawnServer = function(server){
 var getAllServers = function(){
 	return serverHelper.servers();
 }
+
+//recursive function to check if server port already exists
+var checkServer = function(newServer){
+	newServer.port = portStart++;
+	newServer.name = name + newServer.port;
+
+	for (var i = 0; i < allServers.length; i++ ){
+		if ( newServer.name === allServers[i].name ){
+			console.log('Going recursive: '+newServer.name);
+			checkServer(newServer);
+		}
+	}
+
+	return newServer;
+}
+
+//START UP
+initConnections();
+
+// while(spawnedServers.length < servercount){
+//   var index = spawnedServers.length;
+//   console.log('Calling adserver: '+spawnedServers.length);
+//   addServer();
+
+// }
+// for (var i = 0; i < spawnedServers.length; i++) {
+// 	console.log(spawnedServers[i].name);
+// };
 
 //iterate thru the db list and spawn new processes
 //refactor out the spawn method to iterate thru the list of servers and spawn them
