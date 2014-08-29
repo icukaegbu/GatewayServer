@@ -44,9 +44,15 @@ module.exports.add = function(info, socket){
   console.log('stringifying info');
   var infoString = JSON.stringify(info);
   
-  return newServ = new Servers({name:info.name, info:infoString}).save(function(err){
-    console.log(err, '<================');
+  newServ = new Servers({name:info.name, info:infoString}).save(function(err, data){
+    console.log('Inside save ---- '+newServ);
+    if (err) console.log(err, '<================');
+
+    console.log('successful add')
   });
+  console.log('After save ---- '+newServ);
+
+  return newServ;
 };
 
 //remove a server from the list of servers
